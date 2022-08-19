@@ -10,6 +10,11 @@ app.get("/", (req, res) => {
   res.send({ hello: "world" });
 });
 
-app.listen(3001, () => {
+let port = process.env.PORT;
+if (!port) {
+  port = 3001;
+}
+
+app.listen(port, () => {
   console.log("server online");
 });
