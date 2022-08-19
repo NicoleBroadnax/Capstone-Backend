@@ -10,7 +10,7 @@ if (!databaseURL) {
     logging: false,
   };
 } else {
-  // we're not on localhost
+  // we're not on localhost !
   options = {
     logging: false,
     dialectOptions: {
@@ -20,7 +20,6 @@ if (!databaseURL) {
       },
     },
   };
-  
 }
 
 const db = new Sequelize(databaseURL, options);
