@@ -20,6 +20,7 @@ if (!databaseURL) {
       },
     },
   };
+  
 }
 
 const db = new Sequelize(databaseURL, options);
