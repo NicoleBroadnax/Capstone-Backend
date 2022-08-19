@@ -23,7 +23,7 @@ if (!databaseURL) {
 }
 
 const db = new Sequelize(databaseURL, options);
-const User = require("./User")(db);
+const User = require("./user")(db);
 
 //#5 connect and sync to DB
 const connectToDB = async () => {
