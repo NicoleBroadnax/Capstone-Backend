@@ -11,3 +11,4 @@ module.exports = (db) => {
     password: DataTypes.STRING,
   });
 };
+/// query the user for database.  
