@@ -100,6 +100,70 @@ app.get("/services/:category", async (req, res) => {
   });
 });
 
+app.post("/register", async (req, res) => {
+  const userWithThisUsername = await User.findOne({
+    where: { username: req.body.username },
+  });
+  if (userWithThisUsername) {
+    res.send({
+      error: "Username is already taken. Go fish!",
+    });
+  } else {
+    User.create({
+      username: req.body.username,
+      password: bcrypt.hashSync(req.body.password, 10),
+    });
+    res.send({ success: true });
+  }
+});
+
+app.get("/logout", (req, res) => {
+  req.session.destroy();
+  res.send({ isLoggedIn: false });
+});
+
+const authRequired = (req, res, next) => {
+  if (!req.session.user) {
+    res.send({ error: "You're not signed in. No posting for you!" });
+  } else {
+    next();
+  }
+};
+
+app.post("/", authRequired, async (req, res) => {
+  await Post.create({
+    title: req.body.title,
+    content: req.body.content,
+    authorID: req.session?.user?.id,
+  });
+  res.send({ post: "created" });
+});
+app.patch("/post/:id", authRequired, async (req, res) => {
+  const post = await Post.findByPk(req.params.id);
+  post.content = req.body.content;
+  post.title = req.body.title;
+  await post.save();
+  res.send({ success: true, message: "It's been edited" });
+});
+
+app.delete("/post/:id", authRequired, async (req, res) => {
+  await Post.destroy({ where: { id: req.params.id } });
+  res.send({ success: true, message: "That post is outta here" });
+});
+
+app.get("/posts", async (req, res) => {
+  res.send({
+    posts: await Post.findAll({
+      order: [["id", "DESC"]],
+      include: [{ model: User, attributes: ["username"] }],
+    }),
+  });
+});
+
+app.get("/post/:id", async (req, res) => {
+  res.send({ post: await Post.findByPk(req.params.id) });
+});
+
 //createFirstUser();
 
 //next Steps : 1 add user to database
