@@ -12,6 +12,11 @@ app.use(
     ],
   })
 );
+
+const apiKey = require("./sendgridAPIkey");
+const sgMail = require("@sendgrid/mail");
+sgMail.setApiKey(apiKey);
+
 const bcrypt = require("bcrypt");
 const { User, db, Services } = require("./db/db.js");
 const sessions = require("express-session");
@@ -40,7 +45,7 @@ app.listen(port, () => {
 
 app.post("/login", async (req, res) => {
   const foundUser = await User.findOne(
-    { where: { username: req.body.username } },
+    { where: { email: req.body.username } },
     { raw: true }
   );
   if (!foundUser) {
@@ -59,14 +64,14 @@ app.post("/login", async (req, res) => {
   }
 });
 
-// app.get("/loginStatus", (req, res) => {
-//   if (req.session.user) {
-//     console.log("")
-//     res.send({ isLoggedIn: true });
-//   } else {
-//     res.send({ isLoggedIn: false });
-//   }
-// });
+app.get("/loginStatus", (req, res) => {
+  if (req.session.user) {
+    console.log("");
+    res.send({ isLoggedIn: true });
+  } else {
+    res.send({ isLoggedIn: false });
+  }
+});
 
 app.get("/loggedIn", async (req, res) => {
   console.log("req.session: ", req.session);
@@ -86,7 +91,7 @@ const createFirstUser = async () => {
   const users = await User.findAll();
   if (users.length === 0) {
     User.create({
-      username: "Nicole",
+      email: "Nicole",
       password: bcrypt.hashSync("hello1", 10),
     });
   }
@@ -102,7 +107,7 @@ app.get("/services/:category", async (req, res) => {
 
 app.post("/register", async (req, res) => {
   const userWithThisUsername = await User.findOne({
-    where: { username: req.body.username },
+    where: { email: req.body.username },
   });
   if (userWithThisUsername) {
     res.send({
@@ -110,7 +115,7 @@ app.post("/register", async (req, res) => {
     });
   } else {
     User.create({
-      username: req.body.username,
+      email: req.body.username,
       password: bcrypt.hashSync(req.body.password, 10),
     });
     res.send({ success: true });
@@ -151,17 +156,47 @@ app.delete("/post/:id", authRequired, async (req, res) => {
   res.send({ success: true, message: "That post is outta here" });
 });
 
-app.get("/posts", async (req, res) => {
+app.get("/comments", async (req, res) => {
   res.send({
     posts: await Post.findAll({
       order: [["id", "DESC"]],
-      include: [{ model: User, attributes: ["username"] }],
     }),
   });
 });
 
 app.get("/post/:id", async (req, res) => {
   res.send({ post: await Post.findByPk(req.params.id) });
+});
+
+app.post("/forgotPassword", async (req, res) => {
+  const user = await User.findOne({ where: { email: req.body.email } });
+  if (user) {
+    const { nanoid } = await import("nanoid");
+
+    user.PasswordResetToken = nanoid();
+    await user.save();
+
+    const msg = {
+      to: user.email,
+      from: "Nicole_broadnax@icloud.com",
+      subject: "you need a reset, huh?",
+      html: `Click <a href="http://localhost:3000/setPassword?token=${user.forgotPasswordToken}">here</a> to reset your password"`,
+    };
+
+    try {
+      console.log(await sgMail.send(msg));
+    } catch (error) {
+      console.error(error);
+
+      if (error.response) {
+        console.error(error.response.body);
+      }
+    }
+
+    res.send({ message: "password has been reset. go check email" });
+  } else {
+    res.send({ error: " you dont have an account to reset a password on " });
+  }
 });
 
 //createFirstUser();

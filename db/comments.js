@@ -1,14 +1,15 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = (db) => {
-  return db.define("user", {
+  return db.define("comments", {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    email: DataTypes.STRING,
-    password: DataTypes.STRING,
+    userid: DataTypes.INTEGER,
+    rating: DataTypes.INTEGER,
+    content: DataTypes.TEXT,
+    serviceid: DataTypes.INTEGER,
   });
 };
-/// query the user for database.  

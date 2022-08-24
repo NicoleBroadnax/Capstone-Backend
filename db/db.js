@@ -25,6 +25,7 @@ if (!databaseURL) {
 const db = new Sequelize(databaseURL, options);
 const User = require("./user")(db);
 const Services = require("./services")(db);
+const comments = require("./comments")(db);
 
 //#5 connect and sync to DB
 const connectToDB = async () => {
@@ -42,4 +43,4 @@ const connectToDB = async () => {
 
 connectToDB();
 
-module.exports = { db, User, Services }; //#7 export out the DB & Model so we can use it else where in our code
+module.exports = { db, User, Services, comments }; //#7 export out the DB & Model so we can use it else where in our code
