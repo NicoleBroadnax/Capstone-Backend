@@ -105,6 +105,14 @@ app.get("/services/:category", async (req, res) => {
   });
 });
 
+// app.get("/mhs/:category", async (req, res) => {
+//   res.send({
+//     services: await mhs.findAll({
+//       where: { category: req.params.category },
+//     }),
+//   });
+// });
+
 app.post("/register", async (req, res) => {
   const userWithThisUsername = await User.findOne({
     where: { email: req.body.username },
