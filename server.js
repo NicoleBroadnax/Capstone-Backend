@@ -105,8 +105,8 @@ app.get("/services/:category", async (req, res) => {
   });
 });
 
-app.get("/services/:id", async (req, res) => {
-  res.send({ services: await Services.findByPk(req.params.id) });
+app.get("/service/:id", async (req, res) => {
+  res.send({ service: await Services.findByPk(req.params.id) });
 });
 
 // app.get("/mhs/:category", async (req, res) => {
