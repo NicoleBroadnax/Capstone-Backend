@@ -18,7 +18,7 @@ const sgMail = require("@sendgrid/mail");
 sgMail.setApiKey(apiKey);
 
 const bcrypt = require("bcrypt");
-const { User, db, Services } = require("./db/db.js");
+const { User, db, Services, comments } = require("./db/db.js");
 const sessions = require("express-session");
 const sequelizeStore = require("connect-session-sequelize")(sessions.Store);
 const oneMonth = 1000 * 60 * 60 * 24 * 30;
@@ -106,7 +106,9 @@ app.get("/services/:category", async (req, res) => {
 });
 
 app.get("/service/:id", async (req, res) => {
-  res.send({ service: await Services.findByPk(req.params.id) });
+  res.send({
+    service: await Services.findByPk(req.params.id, { include: [comments] }),
+  });
 });
 
 // app.get("/mhs/:category", async (req, res) => {

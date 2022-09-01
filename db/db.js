@@ -35,6 +35,8 @@ const connectToDB = async () => {
     await db.sync(); //#6 sync by creating the tables based off our models if they don't exist already
     // await createFirstUser();
     // await createSecondUser();
+
+    Services.hasMany(comments, { foreignKey: "serviceid" });
   } catch (error) {
     console.error(error);
     console.error("PANIC! DB PROBLEMS!");
