@@ -12,6 +12,7 @@ module.exports = (db) => {
     description: DataTypes.TEXT,
     address: DataTypes.STRING,
     website: DataTypes.STRING,
+    Image: DataTypes.STRING,
   });
 };
 /// query the user for database.

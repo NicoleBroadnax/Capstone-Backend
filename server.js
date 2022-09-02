@@ -178,6 +178,19 @@ app.get("/comments", async (req, res) => {
   });
 });
 
+app.post("/comment/:serviceid", async (req, res) => {
+  await comments.create({
+    content: req.body.content,
+    serviceid: req.params.serviceid,
+  });
+  res.send({
+    posts: await comments.findAll({
+      where: { serviceid: req.params.serviceid },
+      order: [["id", "DESC"]],
+    }),
+  });
+});
+
 app.get("/post/:id", async (req, res) => {
   res.send({ post: await Post.findByPk(req.params.id) });
 });
