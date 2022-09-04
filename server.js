@@ -184,10 +184,7 @@ app.post("/comment/:serviceid", async (req, res) => {
     serviceid: req.params.serviceid,
   });
   res.send({
-    posts: await comments.findAll({
-      where: { serviceid: req.params.serviceid },
-      order: [["id", "DESC"]],
-    }),
+    comment: "created",
   });
 });
 
