@@ -157,7 +157,7 @@ app.post("/", authRequired, async (req, res) => {
   });
   res.send({ post: "created" });
 });
-app.patch("/post/:id", authRequired, async (req, res) => {
+app.patch("/comments/:id", authRequired, async (req, res) => {
   const post = await Post.findByPk(req.params.id);
   post.content = req.body.content;
   post.title = req.body.title;
@@ -165,14 +165,14 @@ app.patch("/post/:id", authRequired, async (req, res) => {
   res.send({ success: true, message: "It's been edited" });
 });
 
-app.delete("/post/:id", authRequired, async (req, res) => {
-  await Post.destroy({ where: { id: req.params.id } });
-  res.send({ success: true, message: "That post is outta here" });
+app.delete("/comment/:id", authRequired, async (req, res) => {
+  await comments.destroy({ where: { id: req.params.id } });
+  res.send({ success: true, message: "That comment is outta here" });
 });
 
 app.get("/comments", async (req, res) => {
   res.send({
-    posts: await Post.findAll({
+    comments: await comments.findAll({
       order: [["id", "DESC"]],
     }),
   });
@@ -188,7 +188,7 @@ app.post("/comment/:serviceid", async (req, res) => {
   });
 });
 
-app.get("/post/:id", async (req, res) => {
+app.get("/comments/:id", async (req, res) => {
   res.send({ post: await Post.findByPk(req.params.id) });
 });
 
@@ -223,7 +223,7 @@ app.post("/forgotPassword", async (req, res) => {
   }
 });
 
-//createFirstUser();
+createFirstUser();
 
 //next Steps : 1 add user to database
 // call the login endpoint from the fron end
